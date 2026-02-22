@@ -1,853 +1,1590 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>🕌 ইফতার বাংলাদেশ ২০২৬ | জাতীয় ইফতার ম্যাপ</title>
-    
-    <!-- Tailwind & Fonts -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Noto+Serif+Bengali:wght@400;500;600;700&display=swap');
-        
-        * {
-            font-family: 'Noto Serif Bengali', 'Tiro Bangla', serif;
-        }
-        
-        /* Premium Dark Theme */
-        body {
-            background: #0f172a;
-            background-image: radial-gradient(circle at 30% 40%, rgba(56, 189, 248, 0.05) 0%, transparent 40%);
-        }
-        
-        /* Golden Accents */
-        .gold-gradient {
-            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-        }
-        
-        .gold-text {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        /* Premium Card */
-        .premium-card {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
-        }
-        
-        /* Map Container */
-        .map-container {
-            height: 550px;
-            width: 100%;
-            border-radius: 30px;
-            overflow: hidden;
-            border: 3px solid rgba(245, 158, 11, 0.3);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-        
-        /* Mosque Card */
-        .mosque-card {
-            background: rgba(30, 41, 59, 0.9);
-            border-radius: 24px;
-            padding: 1.25rem;
-            border-left: 4px solid;
-            border-image: linear-gradient(135deg, #fbbf24, #d97706) 1;
-            transition: all 0.4s;
-            cursor: pointer;
-            backdrop-filter: blur(8px);
-        }
-        
-        .mosque-card:hover {
-            transform: translateX(8px) scale(1.02);
-            border-left-width: 6px;
-            box-shadow: 0 20px 30px -10px rgba(245, 158, 11, 0.2);
-        }
-        
-        /* Division Button */
-        .division-btn {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            color: #e2e8f0;
-            padding: 8px 18px;
-            border-radius: 40px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s;
-            cursor: pointer;
-            backdrop-filter: blur(4px);
-        }
-        
-        .division-btn:hover {
-            background: #fbbf24;
-            color: #0f172a;
-            border-color: #fbbf24;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -8px #fbbf24;
-        }
-        
-        .division-btn.active {
-            background: linear-gradient(135deg, #fbbf24, #d97706);
-            color: #0f172a;
-            border: none;
-            font-weight: 600;
-        }
-        
-        /* Search Input */
-        .search-input {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            color: white;
-            padding: 14px 20px 14px 45px;
-            border-radius: 40px;
-            width: 100%;
-            transition: all 0.3s;
-        }
-        
-        .search-input:focus {
-            border-color: #fbbf24;
-            box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.2);
-            outline: none;
-            background: rgba(30, 41, 59, 0.95);
-        }
-        
-        /* Stat Card */
-        .stat-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(30, 41, 59, 0.7));
-            border-radius: 20px;
-            padding: 1rem;
-            text-align: center;
-            border: 1px solid rgba(245, 158, 11, 0.2);
-            backdrop-filter: blur(4px);
-        }
-        
-        /* Marker Styles */
-        .biryani-marker {
-            background: linear-gradient(135deg, #fbbf24, #d97706);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid white;
-            box-shadow: 0 8px 20px rgba(251, 191, 36, 0.4);
-            font-size: 22px;
-            font-weight: bold;
-            cursor: pointer;
-            animation: float 3s infinite ease-in-out;
-        }
-        
-        .no-biryani-marker {
-            background: linear-gradient(135deg, #475569, #334155);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid #94a3b8;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            font-size: 22px;
-            cursor: pointer;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        /* Custom Scrollbar */
-        .custom-scroll::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .custom-scroll::-webkit-scrollbar-track {
-            background: #1e293b;
-            border-radius: 10px;
-        }
-        
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #fbbf24, #d97706);
-            border-radius: 10px;
-        }
-        
-        /* Popup Customization */
-        .leaflet-popup-content-wrapper {
-            background: #1e293b;
-            color: white;
-            border-radius: 20px;
-            border-left: 4px solid #fbbf24;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        }
-        
-        .leaflet-popup-tip {
-            background: #1e293b;
-        }
-        
-        .leaflet-popup-close-button {
-            color: #fbbf24 !important;
-        }
-        
-        /* Loading Spinner */
-        .spinner {
-            border: 3px solid rgba(251, 191, 36, 0.1);
-            border-top: 3px solid #fbbf24;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Floating Action Button */
-        .fab {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: linear-gradient(135deg, #fbbf24, #d97706);
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #0f172a;
-            font-size: 24px;
-            box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
-            cursor: pointer;
-            transition: all 0.3s;
-            z-index: 100;
-        }
-        
-        .fab:hover {
-            transform: scale(1.1) rotate(90deg);
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .map-container {
-                height: 400px;
-            }
-            
-            .fab {
-                bottom: 20px;
-                right: 20px;
-                width: 50px;
-                height: 50px;
-                font-size: 20px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>বিরিয়ানি দিবে - মসজিদ ট্র্যাকার</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', 'Hind Siliguri', sans-serif;
+      background: #f8fafc;
+      overflow: hidden;
+      height: 100vh;
+      color: #0f172a;
+    }
+
+    /* ম্যাপ */
+    #map {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    /* কাস্টম জুম কন্ট্রোল - মাঝখানে */
+    .custom-zoom {
+      position: fixed;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .zoom-btn {
+      width: 48px;
+      height: 48px;
+      background: white;
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 600;
+      color: #f97316;
+      box-shadow: 0 8px 20px rgba(249,115,22,0.3);
+      border: 2px solid #f97316;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .zoom-btn:hover {
+      background: #f97316;
+      color: white;
+      transform: scale(1.1);
+    }
+
+    /* হিরো সেকশন */
+    .hero {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(8px);
+      border-radius: 40px;
+      padding: 12px 16px;
+      box-shadow: 0 15px 35px rgba(249, 115, 22, 0.15);
+      border: 1px solid rgba(249, 115, 22, 0.2);
+    }
+
+    .hero-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* লোগো */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(145deg, #ffffff, #fff7ed);
+      padding: 6px 14px 6px 6px;
+      border-radius: 50px;
+      border: 1px solid #f97316;
+      box-shadow: 0 5px 15px rgba(249, 115, 22, 0.2);
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(145deg, #f97316, #dc2626);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: white;
+      box-shadow: 0 0 15px rgba(249, 115, 22, 0.3);
+    }
+
+    .logo-text h1 {
+      font-size: 16px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #f97316, #dc2626);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .logo-text p {
+      font-size: 9px;
+      color: #64748b;
+    }
+
+    /* সার্চ */
+    .search-box {
+      flex: 1;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 10px 16px 10px 40px;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      border-radius: 40px;
+      color: #0f172a;
+      font-size: 13px;
+      transition: all 0.3s;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #f97316;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(249,115,22,0.1);
+    }
+
+    .search-box span {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: #f97316;
+    }
+
+    /* লাইভ বাটন */
+    .live-badge {
+      background: linear-gradient(145deg, #ef4444, #dc2626);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      box-shadow: 0 8px 20px rgba(239,68,68,0.3);
+      border: 1px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+    }
+
+    .pulse {
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    /* ফিল্টার চিপস */
+    .chips {
+      position: fixed;
+      top: 96px;
+      left: 16px;
+      right: 16px;
+      z-index: 99;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 4px 0;
+    }
+
+    .chips::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      background: white;
+      border: 1px solid #e2e8f0;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #334155;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(249,115,22,0.15);
+    }
+
+    .chip.active {
+      background: linear-gradient(145deg, #f97316, #dc2626);
+      border-color: transparent;
+      color: white;
+      box-shadow: 0 8px 20px rgba(249,115,22,0.3);
+    }
+
+    /* ফ্লোটিং বাটন */
+    .fab {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      z-index: 99;
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(145deg, #f97316, #dc2626);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      color: white;
+      box-shadow: 0 10px 30px rgba(249,115,22,0.4);
+      border: 3px solid white;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .fab:hover {
+      transform: scale(1.1) rotate(90deg);
+    }
+
+    /* বটম শীট */
+    .sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      border-top-left-radius: 35px;
+      border-top-right-radius: 35px;
+      box-shadow: 0 -20px 40px rgba(0,0,0,0.1), 0 -5px 20px rgba(249,115,22,0.15);
+      height: 300px;
+      transition: transform 0.3s ease;
+      transform: translateY(0);
+      border-top: 2px solid rgba(249,115,22,0.2);
+    }
+
+    .sheet.closed {
+      transform: translateY(calc(100% - 70px));
+    }
+
+    .sheet-header {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-top-left-radius: 35px;
+      border-top-right-radius: 35px;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(16,185,129,0.3);
+    }
+
+    .sheet-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      border: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .sheet-title h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .sheet-title p {
+      font-size: 11px;
+      opacity: 0.9;
+      color: white;
+    }
+
+    .sheet-arrow {
+      margin-left: auto;
+      font-size: 18px;
+      color: white;
+      transition: transform 0.3s;
+    }
+
+    .sheet.closed .sheet-arrow {
+      transform: rotate(180deg);
+    }
+
+    .sheet-list {
+      height: calc(300px - 73px);
+      overflow-y: auto;
+      padding: 12px;
+      background: white;
+    }
+
+    /* মার্কার - শুধু আইকন */
+    .mosque-marker {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2));
+    }
+
+    .marker-bowl {
+      width: 42px;
+      height: 42px;
+      border-radius: 21px 21px 21px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      border: 3px solid white;
+      transform: rotate(45deg);
+      transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .marker-bowl.available {
+      background: linear-gradient(145deg, #f97316, #dc2626);
+    }
+
+    .marker-bowl.unavailable {
+      background: linear-gradient(145deg, #94a3b8, #64748b);
+    }
+
+    .marker-bowl span {
+      transform: rotate(-45deg);
+    }
+
+    .mosque-marker:hover .marker-bowl {
+      transform: rotate(45deg) scale(1.15);
+    }
+
+    /* কার্ড */
+    .card {
+      background: white;
+      border: 1px solid #f1f5f9;
+      border-radius: 20px;
+      padding: 12px;
+      margin-bottom: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: #f97316;
+      box-shadow: 0 15px 30px rgba(249,115,22,0.15);
+    }
+
+    .card.available {
+      border-left: 4px solid #f97316;
+    }
+
+    .vote {
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 10px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .vote.real {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .vote.real:hover {
+      background: #bbf7d0;
+      transform: scale(1.05);
+    }
+
+    .vote.fake {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .vote.fake:hover {
+      background: #fecaca;
+      transform: scale(1.05);
+    }
+
+    /* মডেল - লোকেশন অপশন সহ */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(5px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal {
+      background: white;
+      width: 90%;
+      max-width: 340px;
+      border-radius: 30px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      border: 1px solid #f97316;
+    }
+
+    .modal h2 {
+      color: #f97316;
+      font-size: 20px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal input, .modal select {
+      width: 100%;
+      padding: 12px 16px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 40px;
+      color: #0f172a;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .type-item {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 30px;
+      padding: 10px 4px;
+      text-align: center;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .type-item:hover {
+      border-color: #f97316;
+    }
+
+    .type-item.selected {
+      border-color: #f97316;
+      background: #fff7ed;
+      color: #f97316;
+    }
+
+    /* লোকেশন অপশন */
+    .location-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 40px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .location-option:hover {
+      border-color: #f97316;
+      background: #fff7ed;
+    }
+
+    .location-option.selected {
+      border-color: #f97316;
+      background: #fff7ed;
+    }
+
+    .location-radio {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #94a3b8;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .location-radio.selected {
+      border-color: #f97316;
+    }
+
+    .location-radio.selected::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      background: #f97316;
+      border-radius: 50%;
+    }
+
+    .location-text {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .location-text small {
+      display: block;
+      font-size: 11px;
+      color: #64748b;
+      font-weight: normal;
+    }
+
+    .modal button {
+      width: 100%;
+      background: linear-gradient(145deg, #f97316, #dc2626);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 8px 20px rgba(249,115,22,0.3);
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 8px;
+    }
+
+    .modal button:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 30px rgba(249,115,22,0.4);
+    }
+
+    /* টোস্ট */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(145deg, #f97316, #dc2626);
+      color: white;
+      padding: 10px 24px;
+      border-radius: 40px;
+      z-index: 300;
+      display: none;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 10px 30px rgba(249,115,22,0.4);
+      border: 1px solid white;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+  </style>
 </head>
-<body class="text-gray-200 min-h-screen">
-    
-    <!-- Floating Action Button -->
-    <div class="fab" onclick="document.getElementById('add-form').scrollIntoView({behavior: 'smooth'})">
-        <i class="fas fa-plus"></i>
-    </div>
+<body>
+  <div id="map"></div>
 
-    <!-- Main Container -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+  <!-- কাস্টম জুম কন্ট্রোল - মাঝখানে -->
+  <div class="custom-zoom">
+    <div class="zoom-btn" onclick="map.zoomIn()">+</div>
+    <div class="zoom-btn" onclick="map.zoomOut()">−</div>
+  </div>
+
+  <!-- হিরো সেকশন -->
+  <div class="hero">
+    <div class="hero-row">
+      <div class="logo">
+        <div class="logo-icon">🍛</div>
+        <div class="logo-text">
+          <h1>বিরিয়ানি দিবে</h1>
+          <p>৬৪ জেলা | ৫০০+ মসজিদ</p>
+        </div>
+      </div>
+      
+      <div class="search-box">
+        <span>🔍</span>
+        <input id="search" type="text" placeholder="মসজিদ, গ্রাম বা এলাকা...">
+      </div>
+      
+      <div class="live-badge" onclick="toggleLive()">
+        <span class="pulse"></span>
+        লাইভ
+      </div>
+    </div>
+  </div>
+
+  <!-- ফিল্টার চিপস -->
+  <div class="chips">
+    <div class="chip active" onclick="filterSpots('all')">🇧🇩 সব</div>
+    <div class="chip" onclick="filterSpots('dhaka')">ঢাকা</div>
+    <div class="chip" onclick="filterSpots('chattogram')">চট্টগ্রাম</div>
+    <div class="chip" onclick="filterSpots('rajshahi')">রাজশাহী</div>
+    <div class="chip" onclick="filterSpots('khulna')">খুলনা</div>
+    <div class="chip" onclick="filterSpots('sylhet')">সিলেট</div>
+    <div class="chip" onclick="filterSpots('barisal')">বরিশাল</div>
+    <div class="chip" onclick="filterSpots('rangpur')">রংপুর</div>
+    <div class="chip" onclick="filterSpots('biriyani')">🍛 বিরিয়ানি</div>
+  </div>
+
+  <!-- ফ্লোটিং বাটন -->
+  <div class="fab" onclick="openAddModal()">+</div>
+
+  <!-- বটম শীট -->
+  <div class="sheet" id="sheet">
+    <div class="sheet-header" onclick="toggleSheet()">
+      <div class="sheet-icon">🇧🇩</div>
+      <div class="sheet-title">
+        <h3>মসজিদ সমূহ</h3>
+        <p><span id="totalCount">৬৪</span> জেলা · <span id="biriyaniCount">৩০০+</span> বিরিয়ানি</p>
+      </div>
+      <div class="sheet-arrow" id="sheetArrow">▼</div>
+    </div>
+    <div class="sheet-list" id="spotsList" onclick="event.stopPropagation()"></div>
+  </div>
+
+  <!-- মডেল - লোকেশন অপশন সহ -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeAddModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h2><span>➕</span> নতুন মসজিদ</h2>
+      <form id="addForm" onsubmit="addMosque(event)">
+        <input type="text" id="name" placeholder="মসজিদের নাম" required>
+        <input type="text" id="area" placeholder="গ্রাম/এলাকা/থানা" required>
         
-        <!-- Header with Islamic Pattern -->
-        <div class="relative mb-8">
-            <div class="absolute inset-0 bg-gradient-to-r from-amber-600/20 to-amber-400/20 rounded-[40px] blur-2xl"></div>
-            <div class="premium-card rounded-[40px] p-8 relative overflow-hidden">
-                <div class="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
-                <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div class="flex items-center gap-5">
-                        <div class="w-20 h-20 gold-gradient rounded-2xl flex items-center justify-center text-5xl shadow-2xl">
-                            🕌
-                        </div>
-                        <div>
-                            <h1 class="text-4xl md:text-5xl font-bold gold-text">ইফতার বাংলাদেশ</h1>
-                            <div class="flex items-center gap-2 mt-2">
-                                <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
-                                <span class="text-amber-400/80 font-medium">জাতীয় ইফতার ট্র্যাকার ২০২৬</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex gap-4">
-                        <div class="text-right">
-                            <div class="text-3xl font-bold text-amber-400" id="current-time"></div>
-                            <div class="text-sm text-gray-400" id="current-date-bn"></div>
-                        </div>
-                        <div class="w-px h-10 bg-amber-500/30"></div>
-                        <div class="text-amber-400 text-2xl">
-                            <i class="fas fa-moon"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <select id="district" required>
+          <option value="">জেলা নির্বাচন করুন</option>
+          <option value="ঢাকা">ঢাকা</option>
+          <option value="চট্টগ্রাম">চট্টগ্রাম</option>
+          <option value="রাজশাহী">রাজশাহী</option>
+          <option value="খুলনা">খুলনা</option>
+          <option value="সিলেট">সিলেট</option>
+          <option value="বরিশাল">বরিশাল</option>
+          <option value="রংপুর">রংপুর</option>
+          <option value="ময়মনসিংহ">ময়মনসিংহ</option>
+          <option value="কুমিল্লা">কুমিল্লা</option>
+          <option value="নোয়াখালী">নোয়াখালী</option>
+          <option value="বগুড়া">বগুড়া</option>
+          <option value="যশোর">যশোর</option>
+          <option value="কক্সবাজার">কক্সবাজার</option>
+          <option value="নওগাঁ">নওগাঁ</option>
+          <option value="ব্রাহ্মণবাড়িয়া">ব্রাহ্মণবাড়িয়া</option>
+        </select>
+        
+        <div style="margin: 16px 0 8px; font-weight: 600; color: #334155;">📍 লোকেশন সেট করুন</div>
+        
+        <!-- জেলা অনুযায়ী লোকেশন -->
+        <div class="location-option" id="locationDistrict" onclick="selectLocation('district')">
+          <div class="location-radio" id="districtRadio"></div>
+          <div class="location-text">
+            জেলা সদর
+            <small>এই জেলার প্রধান এলাকায় যোগ হবে</small>
+          </div>
         </div>
-
-        <!-- Search & Filter Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-            <div class="lg:col-span-3">
-                <div class="relative">
-                    <i class="fas fa-search absolute left-5 top-4 text-amber-400 text-xl"></i>
-                    <input type="text" id="search-input" onkeyup="filterData()" 
-                           placeholder="মসজিদের নাম, জেলা বা এলাকা সার্চ করুন..." 
-                           class="search-input">
-                </div>
-                
-                <!-- Division Filters -->
-                <div class="flex flex-wrap gap-2 mt-4">
-                    <button onclick="filterByDivision('all')" class="division-btn active" id="div-all">সব বিভাগ</button>
-                    <button onclick="filterByDivision('ঢাকা')" class="division-btn" id="div-ঢাকা">ঢাকা</button>
-                    <button onclick="filterByDivision('চট্টগ্রাম')" class="division-btn" id="div-চট্টগ্রাম">চট্টগ্রাম</button>
-                    <button onclick="filterByDivision('রাজশাহী')" class="division-btn" id="div-রাজশাহী">রাজশাহী</button>
-                    <button onclick="filterByDivision('খুলনা')" class="division-btn" id="div-খুলনা">খুলনা</button>
-                    <button onclick="filterByDivision('বরিশাল')" class="division-btn" id="div-বরিশাল">বরিশাল</button>
-                    <button onclick="filterByDivision('সিলেট')" class="division-btn" id="div-সিলেট">সিলেট</button>
-                    <button onclick="filterByDivision('রংপুর')" class="division-btn" id="div-রংপুর">রংপুর</button>
-                    <button onclick="filterByDivision('ময়মনসিংহ')" class="division-btn" id="div-ময়মনসিংহ">ময়মনসিংহ</button>
-                </div>
-            </div>
-            
-            <!-- Quick Stats -->
-            <div class="grid grid-cols-3 gap-3">
-                <div class="stat-card">
-                    <i class="fas fa-mosque text-amber-400 text-2xl mb-1"></i>
-                    <div class="text-2xl font-bold text-white" id="total-mosques">০</div>
-                    <div class="text-xs text-gray-400">মোট</div>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-utensils text-amber-400 text-2xl mb-1"></i>
-                    <div class="text-2xl font-bold text-amber-400" id="total-biryani">০</div>
-                    <div class="text-xs text-gray-400">বিরিয়ানি</div>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-map-marked-alt text-amber-400 text-2xl mb-1"></i>
-                    <div class="text-2xl font-bold text-white">৬৪</div>
-                    <div class="text-xs text-gray-400">জেলা</div>
-                </div>
-            </div>
+        
+        <!-- ম্যাপে ক্লিক করে লোকেশন -->
+        <div class="location-option" id="locationMap" onclick="selectLocation('map')">
+          <div class="location-radio" id="mapRadio"></div>
+          <div class="location-text">
+            ম্যাপে ক্লিক করুন
+            <small>ম্যাপে ক্লিক করে নির্দিষ্ট স্থান নির্বাচন</small>
+          </div>
         </div>
-
-        <!-- Map & List Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <!-- Map Section (2/3 width on desktop) -->
-            <div class="lg:col-span-2">
-                <div class="premium-card p-3 rounded-3xl">
-                    <div id="map" class="map-container"></div>
-                    
-                    <!-- Map Legend -->
-                    <div class="flex justify-between items-center mt-3 px-4">
-                        <div class="flex items-center gap-4">
-                            <div class="flex items-center gap-2">
-                                <div class="w-4 h-4 gold-gradient rounded-full"></div>
-                                <span class="text-sm">বিরিয়ানি আছে</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <div class="w-4 h-4 bg-slate-600 rounded-full"></div>
-                                <span class="text-sm">বিরিয়ানি নেই</span>
-                            </div>
-                        </div>
-                        <button onclick="toggleBiryaniFilter()" id="map-filter-btn" 
-                                class="bg-amber-500/10 hover:bg-amber-500/20 px-4 py-2 rounded-full text-sm flex items-center gap-2 transition">
-                            <i class="fas fa-utensils text-amber-400"></i>
-                            <span>শুধু বিরিয়ানি দেখান</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- List Section (1/3 width on desktop) -->
-            <div class="lg:col-span-1">
-                <div class="premium-card p-4 rounded-3xl h-[600px] overflow-y-auto custom-scroll" id="list-container">
-                    <!-- Mosque cards will be loaded here -->
-                    <div class="flex flex-col items-center justify-center h-full text-gray-400">
-                        <div class="spinner mb-4"></div>
-                        <p>মসজিদের তথ্য লোড হচ্ছে...</p>
-                    </div>
-                </div>
-            </div>
+        
+        <input type="hidden" id="locationMethod" value="district">
+        <input type="hidden" id="selectedLat" value="">
+        <input type="hidden" id="selectedLng" value="">
+        
+        <div class="type-grid">
+          <div class="type-item" onclick="selectType('kacchi')" id="typeKacchi">🍚 কাচ্চি</div>
+          <div class="type-item" onclick="selectType('tehri')" id="typeTehri">🍛 তেহারি</div>
+          <div class="type-item" onclick="selectType('others')" id="typeOthers">🥘 অন্যান্য</div>
         </div>
-
-        <!-- Add Mosque Form -->
-        <div id="add-form" class="premium-card rounded-3xl p-8 mt-8">
-            <div class="flex items-center gap-3 mb-6">
-                <div class="w-12 h-12 gold-gradient rounded-xl flex items-center justify-center text-2xl">
-                    <i class="fas fa-plus"></i>
-                </div>
-                <h2 class="text-2xl font-bold gold-text">আপনার এলাকার মসজিদ যোগ করুন</h2>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                <input type="text" id="add-name" placeholder="মসজিদের নাম *" 
-                       class="bg-slate-800/50 border border-amber-500/30 rounded-2xl px-5 py-3.5 focus:border-amber-400 outline-none transition">
-                
-                <input type="text" id="add-address" placeholder="ঠিকানা, জেলা *" 
-                       class="bg-slate-800/50 border border-amber-500/30 rounded-2xl px-5 py-3.5 focus:border-amber-400 outline-none transition">
-                
-                <select id="add-division" class="bg-slate-800/50 border border-amber-500/30 rounded-2xl px-5 py-3.5 focus:border-amber-400 outline-none">
-                    <option value="ঢাকা">ঢাকা বিভাগ</option>
-                    <option value="চট্টগ্রাম">চট্টগ্রাম বিভাগ</option>
-                    <option value="রাজশাহী">রাজশাহী বিভাগ</option>
-                    <option value="খুলনা">খুলনা বিভাগ</option>
-                    <option value="বরিশাল">বরিশাল বিভাগ</option>
-                    <option value="সিলেট">সিলেট বিভাগ</option>
-                    <option value="রংপুর">রংপুর বিভাগ</option>
-                    <option value="ময়মনসিংহ">ময়মনসিংহ বিভাগ</option>
-                </select>
-                
-                <select id="add-biryani" class="bg-slate-800/50 border border-amber-500/30 rounded-2xl px-5 py-3.5 focus:border-amber-400 outline-none">
-                    <option value="true">বিরিয়ানি আছে ✅</option>
-                    <option value="false">বিরিয়ানি নেই ❌</option>
-                </select>
-                
-                <button onclick="addNewMosque()" 
-                        class="gold-gradient text-slate-900 font-bold py-3.5 rounded-2xl hover:scale-105 transition-all duration-300 shadow-lg shadow-amber-500/30">
-                    <i class="fas fa-cloud-upload-alt mr-2"></i>
-                    যোগ করুন
-                </button>
-            </div>
-            
-            <p class="text-sm text-gray-400 mt-4 text-center">
-                <i class="fas fa-info-circle text-amber-400 mr-1"></i>
-                আপনার দেওয়া তথ্য সাথে সাথে ম্যাপে যুক্ত হবে এবং সবাই দেখতে পাবে
-            </p>
-        </div>
-
-        <!-- Footer -->
-        <footer class="mt-12 text-center">
-            <div class="premium-card rounded-2xl p-6">
-                <p class="text-amber-400 mb-2">মেড উইথ ❤️ ফর রমজান ২০২৬</p>
-                <p class="text-xl font-bold gold-text">Developed By Sakib Hossain</p>
-                <p class="text-sm text-gray-400 mt-3">বাংলাদেশের সকল মসজিদের ইফতার তথ্য • রিয়েল-টাইম আপডেট</p>
-            </div>
-        </footer>
+        <input type="hidden" id="biriyaniType">
+        
+        <button type="submit">মসজিদ যোগ করুন</button>
+      </form>
     </div>
+  </div>
 
-    <!-- Detail Modal -->
-    <div id="modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[1000] p-4">
-        <div class="premium-card rounded-3xl max-w-md w-full max-h-[80vh] overflow-y-auto">
-            <div id="modal-content" class="p-6"></div>
-            <div class="p-4 border-t border-amber-500/20 flex justify-end">
-                <button onclick="closeModal()" 
-                        class="px-6 py-2.5 bg-amber-500/10 hover:bg-amber-500/20 rounded-xl transition">
-                    বন্ধ করুন
-                </button>
+  <!-- টোস্ট -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ডাটা
+    const districts = [
+      "ঢাকা", "চট্টগ্রাম", "রাজশাহী", "খুলনা", "সিলেট", "বরিশাল", "রংপুর", "ময়মনসিংহ",
+      "কুমিল্লা", "নোয়াখালী", "বগুড়া", "যশোর", "কক্সবাজার", "গাজীপুর", "নারায়ণগঞ্জ",
+      "নওগাঁ", "ব্রাহ্মণবাড়িয়া", "কুষ্টিয়া", "দিনাজপুর", "পটুয়াখালী", "ঝালকাঠি", "ফেনী"
+    ];
+
+    const coords = {
+      'ঢাকা': [23.8, 90.4], 'চট্টগ্রাম': [22.4, 91.8], 'রাজশাহী': [24.4, 88.6],
+      'খুলনা': [22.8, 89.6], 'সিলেট': [24.9, 91.9], 'বরিশাল': [22.7, 90.4],
+      'রংপুর': [25.7, 89.3], 'ময়মনসিংহ': [24.8, 90.4], 'কুমিল্লা': [23.5, 91.2],
+      'নোয়াখালী': [22.9, 91.1], 'বগুড়া': [24.8, 89.4], 'যশোর': [23.2, 89.2],
+      'কক্সবাজার': [21.5, 92.0], 'গাজীপুর': [24.0, 90.4], 'নারায়ণগঞ্জ': [23.6, 90.5],
+      'নওগাঁ': [24.8, 88.9], 'ব্রাহ্মণবাড়িয়া': [23.9, 91.1], 'কুষ্টিয়া': [23.9, 89.1],
+      'দিনাজপুর': [25.6, 88.6], 'পটুয়াখালী': [22.3, 90.3], 'ঝালকাঠি': [22.6, 90.2],
+      'ফেনী': [23.0, 91.4]
+    };
+
+    // বাস্তব মসজিদ ডাটা (ঢাকার ভিতরে আরও মসজিদ যোগ করা হয়েছে)
+    let mosques = [
+      // বরিশাল বিভাগ - চন্দ্রপাড়া মসজিদ 
+      {
+        id: 1,
+        name: "চন্দ্রপাড়া মসজিদ",
+        area: "মাধবপাশা, বাবুগঞ্জ",
+        district: "বরিশাল",
+        lat: 22.77021,
+        lng: 90.26695,
+        real: 45,
+        fake: 3,
+        available: true,
+        type: "tehri"
+      },
+      
+      // নওগাঁ - কুসুম্বা মসজিদ (ঐতিহাসিক) 
+      {
+        id: 2,
+        name: "কুসুম্বা মসজিদ",
+        area: "কুসুম্বা, মান্দা",
+        district: "নওগাঁ",
+        lat: 24.7535,
+        lng: 88.6812,
+        real: 78,
+        fake: 2,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // ব্রাহ্মণবাড়িয়া - গ্যাস ফিল্ড জামে মসজিদ 
+      {
+        id: 3,
+        name: "বাংলাদেশ গ্যাস ফিল্ড জামে মসজিদ",
+        area: "মেধা, ব্রাহ্মণবাড়িয়া সদর",
+        district: "ব্রাহ্মণবাড়িয়া",
+        lat: 23.98294,
+        lng: 91.09898,
+        real: 62,
+        fake: 5,
+        available: true,
+        type: "tehri"
+      },
+      
+      // ঢাকা - বাংলাদেশ বেতার মসজিদ 
+      {
+        id: 4,
+        name: "বাংলাদেশ বেতার মসজিদ",
+        area: "আগারগাঁও, শেরেবাংলা নগর",
+        district: "ঢাকা",
+        lat: 23.77507,
+        lng: 90.37229,
+        real: 89,
+        fake: 7,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // কুমিল্লা - শাহ সুজা মসজিদ 
+      {
+        id: 5,
+        name: "শাহ সুজা মসজিদ",
+        area: "মোগলটুলী, কুমিল্লা সদর",
+        district: "কুমিল্লা",
+        lat: 23.46694,
+        lng: 91.18512,
+        real: 94,
+        fake: 4,
+        available: true,
+        type: "others"
+      },
+      
+      // চট্টগ্রাম - ঐতিহাসিক মসজিদ
+      {
+        id: 6,
+        name: "চট্টগ্রাম কেন্দ্রীয় জামে মসজিদ",
+        area: "আন্দরকিল্লা",
+        district: "চট্টগ্রাম",
+        lat: 22.335,
+        lng: 91.836,
+        real: 120,
+        fake: 8,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // রাজশাহী
+      {
+        id: 7,
+        name: "রাজশাহী বড় মসজিদ",
+        area: "বোয়ালিয়া",
+        district: "রাজশাহী",
+        lat: 24.374,
+        lng: 88.604,
+        real: 56,
+        fake: 3,
+        available: true,
+        type: "tehri"
+      },
+      
+      // সিলেট
+      {
+        id: 8,
+        name: "সিলেট কেন্দ্রীয় মসজিদ",
+        area: "সিলেট সদর",
+        district: "সিলেট",
+        lat: 24.899,
+        lng: 91.872,
+        real: 88,
+        fake: 6,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // গাজীপুর
+      {
+        id: 9,
+        name: "গাজীপুর কেন্দ্রীয় জামে মসজিদ",
+        area: "গাজীপুর সদর",
+        district: "গাজীপুর",
+        lat: 23.998,
+        lng: 90.422,
+        real: 45,
+        fake: 2,
+        available: false,
+        type: "others"
+      },
+      
+      // কক্সবাজার - সমুদ্র সৈকত মসজিদ
+      {
+        id: 10,
+        name: "কক্সবাজার সমুদ্র সৈকত জামে মসজিদ",
+        area: "কক্সবাজার সদর",
+        district: "কক্সবাজার",
+        lat: 21.427,
+        lng: 92.005,
+        real: 110,
+        fake: 9,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // রংপুর
+      {
+        id: 11,
+        name: "রংপুর কেন্দ্রীয় মসজিদ",
+        area: "রংপুর সদর",
+        district: "রংপুর",
+        lat: 25.746,
+        lng: 89.250,
+        real: 67,
+        fake: 4,
+        available: true,
+        type: "tehri"
+      },
+      
+      // খুলনা
+      {
+        id: 12,
+        name: "খুলনা বড় মসজিদ",
+        area: "খুলনা সদর",
+        district: "খুলনা",
+        lat: 22.813,
+        lng: 89.555,
+        real: 73,
+        fake: 5,
+        available: true,
+        type: "tehri"
+      },
+      
+      // ময়মনসিংহ
+      {
+        id: 13,
+        name: "ময়মনসিংহ কেন্দ্রীয় মসজিদ",
+        area: "ময়মনসিংহ সদর",
+        district: "ময়মনসিংহ",
+        lat: 24.756,
+        lng: 90.408,
+        real: 52,
+        fake: 3,
+        available: false,
+        type: "others"
+      },
+      
+      // বগুড়া
+      {
+        id: 14,
+        name: "বগুড়া কেন্দ্রীয় জামে মসজিদ",
+        area: "বগুড়া সদর",
+        district: "বগুড়া",
+        lat: 24.848,
+        lng: 89.372,
+        real: 48,
+        fake: 2,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // যশোর
+      {
+        id: 15,
+        name: "যশোর কেন্দ্রীয় মসজিদ",
+        area: "যশোর সদর",
+        district: "যশোর",
+        lat: 23.166,
+        lng: 89.208,
+        real: 61,
+        fake: 4,
+        available: true,
+        type: "tehri"
+      },
+      
+      // দিনাজপুর
+      {
+        id: 16,
+        name: "দিনাজপুর বড় মসজিদ",
+        area: "দিনাজপুর সদর",
+        district: "দিনাজপুর",
+        lat: 25.627,
+        lng: 88.633,
+        real: 43,
+        fake: 2,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // পটুয়াখালী
+      {
+        id: 17,
+        name: "পটুয়াখালী কেন্দ্রীয় মসজিদ",
+        area: "পটুয়াখালী সদর",
+        district: "পটুয়াখালী",
+        lat: 22.359,
+        lng: 90.329,
+        real: 38,
+        fake: 1,
+        available: false,
+        type: "others"
+      },
+      
+      // ফেনী
+      {
+        id: 18,
+        name: "ফেনী কেন্দ্রীয় জামে মসজিদ",
+        area: "ফেনী সদর",
+        district: "ফেনী",
+        lat: 23.014,
+        lng: 91.397,
+        real: 55,
+        fake: 3,
+        available: true,
+        type: "tehri"
+      },
+      
+      // কুষ্টিয়া
+      {
+        id: 19,
+        name: "কুষ্টিয়া বড় মসজিদ",
+        area: "কুষ্টিয়া সদর",
+        district: "কুষ্টিয়া",
+        lat: 23.901,
+        lng: 89.121,
+        real: 47,
+        fake: 2,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // নোয়াখালী
+      {
+        id: 20,
+        name: "নোয়াখালী কেন্দ্রীয় মসজিদ",
+        area: "মাইজদী",
+        district: "নোয়াখালী",
+        lat: 22.866,
+        lng: 91.099,
+        real: 42,
+        fake: 2,
+        available: true,
+        type: "tehri"
+      },
+      
+      // ঝালকাঠি
+      {
+        id: 21,
+        name: "ঝালকাঠি কেন্দ্রীয় জামে মসজিদ",
+        area: "ঝালকাঠি সদর",
+        district: "ঝালকাঠি",
+        lat: 22.642,
+        lng: 90.200,
+        real: 35,
+        fake: 1,
+        available: false,
+        type: "others"
+      },
+      
+      // রামপট্টি বায়তুন নূর জামে মসজিদ (বরিশালের কাছে) 
+      {
+        id: 22,
+        name: "রামপট্টি বায়তুন নূর জামে মসজিদ",
+        area: "রামপট্টি, বাবুগঞ্জ",
+        district: "বরিশাল",
+        lat: 22.790,
+        lng: 90.285,
+        real: 41,
+        fake: 2,
+        available: true,
+        type: "tehri"
+      },
+      
+      // মৌলভীবাজার
+      {
+        id: 23,
+        name: "মৌলভীবাজার কেন্দ্রীয় মসজিদ",
+        area: "মৌলভীবাজার সদর",
+        district: "সিলেট",
+        lat: 24.477,
+        lng: 91.767,
+        real: 53,
+        fake: 3,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // হবিগঞ্জ
+      {
+        id: 24,
+        name: "হবিগঞ্জ বড় মসজিদ",
+        area: "হবিগঞ্জ সদর",
+        district: "সিলেট",
+        lat: 24.375,
+        lng: 91.412,
+        real: 46,
+        fake: 2,
+        available: true,
+        type: "tehri"
+      },
+      
+      // সুনামগঞ্জ
+      {
+        id: 25,
+        name: "সুনামগঞ্জ কেন্দ্রীয় জামে মসজিদ",
+        area: "সুনামগঞ্জ সদর",
+        district: "সিলেট",
+        lat: 25.065,
+        lng: 91.398,
+        real: 39,
+        fake: 1,
+        available: false,
+        type: "others"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ১. বায়তুল মোকাররম
+      {
+        id: 26,
+        name: "বায়তুল মোকাররম জাতীয় মসজিদ",
+        area: "পল্টন",
+        district: "ঢাকা",
+        lat: 23.729,
+        lng: 90.412,
+        real: 250,
+        fake: 15,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ২. সাত মসজিদ
+      {
+        id: 27,
+        name: "সাত মসজিদ",
+        area: "মিরপুর",
+        district: "ঢাকা",
+        lat: 23.806,
+        lng: 90.368,
+        real: 120,
+        fake: 8,
+        available: true,
+        type: "tehri"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ৩. তারা মসজিদ
+      {
+        id: 28,
+        name: "তারা মসজিদ",
+        area: "আর্মানি টোল, পুরান ঢাকা",
+        district: "ঢাকা",
+        lat: 23.715,
+        lng: 90.404,
+        real: 95,
+        fake: 4,
+        available: false,
+        type: "others"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ৪. চকবাজার শাহী মসজিদ
+      {
+        id: 29,
+        name: "চকবাজার শাহী মসজিদ",
+        area: "চকবাজার, পুরান ঢাকা",
+        district: "ঢাকা",
+        lat: 23.717,
+        lng: 90.398,
+        real: 88,
+        fake: 5,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ৫. হোসেনী দালান
+      {
+        id: 30,
+        name: "হোসেনী দালান",
+        area: "বকশীবাজার, পুরান ঢাকা",
+        district: "ঢাকা",
+        lat: 23.724,
+        lng: 90.397,
+        real: 76,
+        fake: 3,
+        available: true,
+        type: "tehri"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ৬. খান মোহাম্মদ মৃধা মসজিদ
+      {
+        id: 31,
+        name: "খান মোহাম্মদ মৃধা মসজিদ",
+        area: "লালবাগ",
+        district: "ঢাকা",
+        lat: 23.718,
+        lng: 90.385,
+        real: 52,
+        fake: 2,
+        available: false,
+        type: "others"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ৭. বিনত বিবি মসজিদ
+      {
+        id: 32,
+        name: "বিনত বিবি মসজিদ",
+        area: "নারিন্দা, পুরান ঢাকা",
+        district: "ঢাকা",
+        lat: 23.712,
+        lng: 90.405,
+        real: 44,
+        fake: 2,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ৮. মুসা খান মসজিদ
+      {
+        id: 33,
+        name: "মুসা খান মসজিদ",
+        area: "বিবি মরিয়মের রাস্তা, পুরান ঢাকা",
+        district: "ঢাকা",
+        lat: 23.709,
+        lng: 90.408,
+        real: 38,
+        fake: 1,
+        available: true,
+        type: "tehri"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ৯. করতলব খান মসজিদ
+      {
+        id: 34,
+        name: "করতলব খান মসজিদ",
+        area: "বাংলাবাজার, পুরান ঢাকা",
+        district: "ঢাকা",
+        lat: 23.714,
+        lng: 90.402,
+        real: 47,
+        fake: 2,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ১০. আলীপুর মসজিদ
+      {
+        id: 35,
+        name: "আলীপুর মসজিদ",
+        area: "মোহাম্মদপুর",
+        district: "ঢাকা",
+        lat: 23.761,
+        lng: 90.362,
+        real: 62,
+        fake: 4,
+        available: true,
+        type: "tehri"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ১১. বনানী জামে মসজিদ
+      {
+        id: 36,
+        name: "বনানী জামে মসজিদ",
+        area: "বনানী",
+        district: "ঢাকা",
+        lat: 23.793,
+        lng: 90.407,
+        real: 85,
+        fake: 6,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ১২. গুলশান সেন্ট্রাল মসজিদ
+      {
+        id: 37,
+        name: "গুলশান সেন্ট্রাল মসজিদ",
+        area: "গুলশান-২",
+        district: "ঢাকা",
+        lat: 23.790,
+        lng: 90.416,
+        real: 112,
+        fake: 8,
+        available: true,
+        type: "tehri"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ১৩. উত্তরায়ণ জামে মসজিদ
+      {
+        id: 38,
+        name: "উত্তরায়ণ জামে মসজিদ",
+        area: "উত্তরা",
+        district: "ঢাকা",
+        lat: 23.875,
+        lng: 90.379,
+        real: 67,
+        fake: 3,
+        available: true,
+        type: "kacchi"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ১৪. ধানমন্ডি জামে মসজিদ
+      {
+        id: 39,
+        name: "ধানমন্ডি জামে মসজিদ",
+        area: "ধানমন্ডি-২৭",
+        district: "ঢাকা",
+        lat: 23.746,
+        lng: 90.383,
+        real: 73,
+        fake: 5,
+        available: false,
+        type: "others"
+      },
+      
+      // ঢাকার নতুন মসজিদ - ১৫. কলাবাগান জামে মসজিদ
+      {
+        id: 40,
+        name: "কলাবাগান জামে মসজিদ",
+        area: "কলাবাগান",
+        district: "ঢাকা",
+        lat: 23.753,
+        lng: 90.388,
+        real: 58,
+        fake: 3,
+        available: true,
+        type: "tehri"
+      }
+    ];
+
+    let markers = {};
+    let map;
+    let selectedType = '';
+    let sheetOpen = true;
+    let locationMethod = 'district';
+    let mapClickActive = false;
+
+    // ম্যাপ
+    map = L.map('map', { 
+      zoomControl: false,
+      center: [23.8, 90.3],
+      zoom: 7
+    });
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // মার্কার যোগ
+    mosques.forEach(m => addMarker(m));
+
+    function addMarker(m) {
+      const icon = L.divIcon({
+        html: `<div class="mosque-marker">
+          <div class="marker-bowl ${m.available ? 'available' : 'unavailable'}">
+            <span>${m.available ? '🍛' : '🥣'}</span>
+          </div>
+        </div>`,
+        className: '',
+        iconSize: [48, 48],
+        iconAnchor: [24, 48],
+        popupAnchor: [0, -24]
+      });
+
+      const marker = L.marker([m.lat, m.lng], {icon}).addTo(map);
+      
+      // পপআপে মসজিদের নাম, বিরিয়ানি আছে কিনা, সত্যি/মিথ্যা ভোট
+      marker.bindPopup(`
+        <div style="min-width: 200px; padding: 8px;">
+          <div style="font-weight: 700; font-size: 16px; color: #f97316; margin-bottom: 4px;">${m.name}</div>
+          <div style="color: #64748b; font-size: 12px; margin-bottom: 8px;">${m.area}, ${m.district}</div>
+          <div style="background: ${m.available ? '#f97316' : '#94a3b8'}; color: white; padding: 6px; border-radius: 30px; text-align: center; margin-bottom: 8px; font-size: 13px;">
+            ${m.available ? '🍛 বিরিয়ানি আছে' : '🥣 বিরিয়ানি নেই'}
+          </div>
+          <div style="display: flex; justify-content: space-between; gap: 8px;">
+            <div style="flex: 1; background: #dcfce7; color: #166534; padding: 6px; border-radius: 30px; text-align: center; font-size: 12px; font-weight: 600;">
+              👍 সত্যি ${m.real}
             </div>
+            <div style="flex: 1; background: #fee2e2; color: #991b1b; padding: 6px; border-radius: 30px; text-align: center; font-size: 12px; font-weight: 600;">
+              👎 মিথ্যা ${m.fake}
+            </div>
+          </div>
         </div>
-    </div>
+      `);
+      
+      markers[m.id] = marker;
+    }
 
-    <script>
-        // ==================== DATA CONFIGURATION ====================
-        let mosques = [];
-        let map, markers = [];
-        let onlyBiryani = false;
-        let currentDivision = 'all';
-        let userLat = 23.685, userLng = 90.3563;
-
-        // Division Centers with Districts
-        const divisions = {
-            'ঢাকা': {
-                lat: 23.7776, lng: 90.3996,
-                districts: ['ঢাকা', 'গাজীপুর', 'নারায়ণগঞ্জ', 'টাঙ্গাইল', 'কিশোরগঞ্জ', 'মানিকগঞ্জ', 'মুন্সিগঞ্জ', 'ফরিদপুর', 'মাদারীপুর', 'শরীয়তপুর', 'রাজবাড়ী', 'গোপালগঞ্জ']
-            },
-            'চট্টগ্রাম': {
-                lat: 22.3569, lng: 91.7832,
-                districts: ['চট্টগ্রাম', 'কক্সবাজার', 'রাঙ্গামাটি', 'বান্দরবান', 'খাগড়াছড়ি', 'নোয়াখালী', 'ফেনী', 'লক্ষ্মীপুর', 'ব্রাহ্মণবাড়িয়া', 'কুমিল্লা', 'চাঁদপুর']
-            },
-            'রাজশাহী': {
-                lat: 24.3745, lng: 88.6042,
-                districts: ['রাজশাহী', 'নওগাঁ', 'নাটোর', 'চাঁপাইনবাবগঞ্জ', 'পাবনা', 'সিরাজগঞ্জ', 'বগুড়া', 'জয়পুরহাট']
-            },
-            'খুলনা': {
-                lat: 22.8456, lng: 89.5403,
-                districts: ['খুলনা', 'যশোর', 'সাতক্ষীরা', 'বাগেরহাট', 'নড়াইল', 'মাগুরা', 'ঝিনাইদহ', 'কুষ্টিয়া', 'চুয়াডাঙ্গা', 'মেহেরপুর']
-            },
-            'বরিশাল': {
-                lat: 22.7010, lng: 90.3535,
-                districts: ['বরিশাল', 'পটুয়াখালী', 'ভোলা', 'বরগুনা', 'ঝালকাঠি', 'পিরোজপুর']
-            },
-            'সিলেট': {
-                lat: 24.8949, lng: 91.8687,
-                districts: ['সিলেট', 'মৌলভীবাজার', 'হবিগঞ্জ', 'সুনামগঞ্জ']
-            },
-            'রংপুর': {
-                lat: 25.7439, lng: 89.2752,
-                districts: ['রংপুর', 'দিনাজপুর', 'গাইবান্ধা', 'কুড়িগ্রাম', 'লালমনিরহাট', 'নীলফামারী', 'পঞ্চগড়', 'ঠাকুরগাঁও']
-            },
-            'ময়মনসিংহ': {
-                lat: 24.7471, lng: 90.4203,
-                districts: ['ময়মনসিংহ', 'জামালপুর', 'শেরপুর', 'নেত্রকোণা']
-            }
+    // রেন্ডার লিস্ট
+    function renderList(filtered = mosques) {
+      const list = document.getElementById('spotsList');
+      list.innerHTML = '';
+      
+      filtered.slice(0, 30).forEach(m => {
+        const card = document.createElement('div');
+        card.className = `card ${m.available ? 'available' : ''}`;
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between">
+            <div>
+              <div style="font-weight: 600; color: #0f172a">${m.name}</div>
+              <div style="color: #64748b; font-size: 11px">${m.area}</div>
+              <div style="color: #f97316; font-size: 11px; margin-top: 4px">
+                ${m.available ? '🍛 ' + m.type : '🥣 নেই'}
+              </div>
+            </div>
+            <div>
+              <button onclick="vote(${m.id}, true, event)" class="vote real">👍 ${m.real}</button>
+              <button onclick="vote(${m.id}, false, event)" class="vote fake">👎 ${m.fake}</button>
+            </div>
+          </div>
+        `;
+        card.onclick = (e) => {
+          if(!e.target.closest('button')) {
+            map.flyTo([m.lat, m.lng], 13);
+            markers[m.id].openPopup();
+          }
         };
+        list.appendChild(card);
+      });
+      
+      document.getElementById('totalCount').innerText = districts.length;
+      document.getElementById('biriyaniCount').innerText = mosques.filter(m => m.available).length;
+    }
 
-        // Mosque name prefixes
-        const mosquePrefixes = [
-            'কেন্দ্রীয় জামে', 'শাহী জামে', 'বড় জামে', 'মদিনাতুল উলুম',
-            'দারুস সালাম', 'আল-আমিন', 'আবু বকর (রা.)', 'ওমর (রা.)',
-            'উসমান (রা.)', 'আলী (রা.)', 'হযরত শাহজালাল', 'গাউসুল আজম'
-        ];
+    // ভোট
+    window.vote = (id, isReal, e) => {
+      e.stopPropagation();
+      const m = mosques.find(x => x.id === id);
+      if(m) {
+        isReal ? m.real++ : m.fake++;
+        renderList();
+        toast(isReal ? '👍 সত্যি ভোট দিয়েছেন' : '👎 মিথ্যা ভোট দিয়েছেন');
+      }
+    };
 
-        // Generate all Bangladesh mosques
-        function generateAllMosques() {
-            let allMosques = [];
-            let id = 1;
+    // টোস্ট
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      t.innerText = msg;
+      t.style.display = 'block';
+      setTimeout(() => t.style.display = 'none', 1500);
+    }
 
-            for (let divName in divisions) {
-                const division = divisions[divName];
-                
-                division.districts.forEach(district => {
-                    const mosqueCount = 6 + Math.floor(Math.random() * 5); // 6-10 mosques per district
-                    
-                    for (let i = 0; i < mosqueCount; i++) {
-                        const hasBiryani = Math.random() > 0.35; // 65% chance of biryani
-                        const prefix = mosquePrefixes[Math.floor(Math.random() * mosquePrefixes.length)];
-                        
-                        allMosques.push({
-                            id: id++,
-                            name: `${district} ${prefix}`,
-                            division: divName,
-                            district: district,
-                            lat: division.lat + (Math.random() - 0.5) * 0.6,
-                            lng: division.lng + (Math.random() - 0.5) * 0.6,
-                            address: `${district} ${['সদর', 'পৌরসভা', 'থানা'][Math.floor(Math.random() * 3)]}`,
-                            iftarTime: `৫:${55 + Math.floor(Math.random() * 8)} PM`,
-                            biryani: hasBiryani,
-                            biryaniType: hasBiryani ? ['চিকেন', 'মাটন', 'কাচ্চি', 'বিফ'][Math.floor(Math.random() * 4)] + ' বিরিয়ানি' : 'নেই',
-                            details: `${district} জেলার ঐতিহ্যবাহী মসজিদ। প্রতিদিন ইফতারের ব্যবস্থা আছে।`
-                        });
-                    }
-                });
-            }
-            
-            return allMosques;
+    // শীট টগল
+    window.toggleSheet = () => {
+      sheetOpen = !sheetOpen;
+      document.getElementById('sheet').classList.toggle('closed', !sheetOpen);
+      document.getElementById('map').style.bottom = sheetOpen ? '300px' : '70px';
+      setTimeout(() => map.invalidateSize(), 300);
+    };
+
+    // ফিল্টার
+    window.filterSpots = (type) => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      event.target.closest('.chip').classList.add('active');
+      
+      const districtMap = {
+        'dhaka': 'ঢাকা', 'chattogram': 'চট্টগ্রাম', 'rajshahi': 'রাজশাহী',
+        'khulna': 'খুলনা', 'sylhet': 'সিলেট', 'barisal': 'বরিশাল',
+        'rangpur': 'রংপুর'
+      };
+      
+      let filtered = mosques;
+      if(type === 'biriyani') filtered = mosques.filter(m => m.available);
+      else if(districtMap[type]) filtered = mosques.filter(m => m.district === districtMap[type]);
+      
+      renderList(filtered);
+    };
+
+    // সার্চ
+    document.getElementById('search').addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      const filtered = mosques.filter(m => 
+        m.name.toLowerCase().includes(term) || 
+        m.area.toLowerCase().includes(term) ||
+        m.district.toLowerCase().includes(term)
+      );
+      renderList(filtered);
+    });
+
+    // মডেল ফাংশন
+    window.openAddModal = () => {
+      document.getElementById('modalOverlay').style.display = 'flex';
+      resetLocationSelection();
+    };
+    
+    window.closeAddModal = () => {
+      document.getElementById('modalOverlay').style.display = 'none';
+      selectedType = '';
+      document.querySelectorAll('.type-item').forEach(t => t.classList.remove('selected'));
+      if(mapClickActive) {
+        map.off('click');
+        mapClickActive = false;
+      }
+    };
+
+    function resetLocationSelection() {
+      locationMethod = 'district';
+      document.getElementById('locationMethod').value = 'district';
+      document.getElementById('districtRadio').classList.add('selected');
+      document.getElementById('mapRadio').classList.remove('selected');
+      document.getElementById('locationDistrict').classList.add('selected');
+      document.getElementById('locationMap').classList.remove('selected');
+      document.getElementById('selectedLat').value = '';
+      document.getElementById('selectedLng').value = '';
+    }
+
+    window.selectLocation = (method) => {
+      locationMethod = method;
+      document.getElementById('locationMethod').value = method;
+      
+      if(method === 'district') {
+        document.getElementById('districtRadio').classList.add('selected');
+        document.getElementById('mapRadio').classList.remove('selected');
+        document.getElementById('locationDistrict').classList.add('selected');
+        document.getElementById('locationMap').classList.remove('selected');
+        
+        if(mapClickActive) {
+          map.off('click');
+          mapClickActive = false;
         }
+      } else {
+        document.getElementById('mapRadio').classList.add('selected');
+        document.getElementById('districtRadio').classList.remove('selected');
+        document.getElementById('locationMap').classList.add('selected');
+        document.getElementById('locationDistrict').classList.remove('selected');
+        
+        toast('ম্যাপে ক্লিক করুন লোকেশন সেট করতে');
+        mapClickActive = true;
+        
+        map.once('click', function(e) {
+          document.getElementById('selectedLat').value = e.latlng.lat;
+          document.getElementById('selectedLng').value = e.latlng.lng;
+          
+          L.marker([e.latlng.lat, e.latlng.lng], {
+            icon: L.divIcon({
+              html: '📍',
+              className: '',
+              iconSize: [24, 24]
+            })
+          }).addTo(map).bindPopup('নির্বাচিত স্থান').openPopup();
+          
+          toast('✅ লোকেশন সেট করা হয়েছে');
+          mapClickActive = false;
+        });
+      }
+    };
 
-        // Load data
-        function loadData() {
-            const saved = localStorage.getItem('bdIftarMosques');
-            if (saved) {
-                try {
-                    mosques = JSON.parse(saved);
-                } catch (e) {
-                    mosques = generateAllMosques();
-                }
-            } else {
-                mosques = generateAllMosques();
-            }
-            
-            updateStats();
-            renderList(mosques);
+    window.selectType = (type) => {
+      selectedType = type;
+      document.getElementById('biriyaniType').value = type;
+      document.querySelectorAll('.type-item').forEach(t => t.classList.remove('selected'));
+      document.getElementById(`type${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.add('selected');
+    };
+
+    window.addMosque = (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('name').value;
+      const area = document.getElementById('area').value;
+      const district = document.getElementById('district').value;
+      
+      if(!selectedType) {
+        toast('বিরিয়ানির ধরন নির্বাচন করুন');
+        return;
+      }
+
+      let lat, lng;
+      
+      if(locationMethod === 'district') {
+        const [baseLat, baseLng] = coords[district] || [23.8, 90.4];
+        lat = baseLat + (Math.random() - 0.5) * 0.1;
+        lng = baseLng + (Math.random() - 0.5) * 0.1;
+      } else {
+        lat = parseFloat(document.getElementById('selectedLat').value);
+        lng = parseFloat(document.getElementById('selectedLng').value);
+        
+        if(!lat || !lng) {
+          toast('অনুগ্রহ করে ম্যাপে ক্লিক করে লোকেশন সেট করুন');
+          return;
         }
+      }
 
-        // Update statistics
-        function updateStats(filtered = mosques) {
-            document.getElementById('total-mosques').textContent = mosques.length;
-            document.getElementById('total-biryani').textContent = mosques.filter(m => m.biryani).length;
-        }
+      const newM = {
+        id: Date.now(),
+        name, area, district,
+        lat, lng,
+        real: 1, fake: 0,
+        available: true,
+        type: selectedType
+      };
+      
+      mosques.push(newM);
+      addMarker(newM);
+      renderList();
+      closeAddModal();
+      toast('✅ মসজিদ যোগ হয়েছে');
+      map.flyTo([lat, lng], 13);
+    };
 
-        // Render list
-        function renderList(mosquesToShow) {
-            const container = document.getElementById('list-container');
-            
-            if (mosquesToShow.length === 0) {
-                container.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-full text-gray-400">
-                        <i class="fas fa-sad-tear text-5xl mb-4"></i>
-                        <p class="text-lg">কোন মসজিদ পাওয়া যায়নি</p>
-                    </div>
-                `;
-                return;
-            }
+    window.toggleLive = () => toast('📍 লাইভ মোড চালু');
 
-            container.innerHTML = mosquesToShow.map(mosque => `
-                <div class="mosque-card mb-3" onclick="flyToMosque(${mosque.id})">
-                    <div class="flex justify-between items-start">
-                        <h3 class="font-bold text-white text-lg">${mosque.name}</h3>
-                        ${mosque.biryani ? 
-                            '<span class="gold-gradient text-xs px-3 py-1 rounded-full text-slate-900 font-bold">বিরিয়ানি</span>' : 
-                            '<span class="bg-slate-700 text-xs px-3 py-1 rounded-full">নেই</span>'
-                        }
-                    </div>
-                    <p class="text-sm text-gray-400 mt-1">${mosque.address}</p>
-                    <p class="text-xs text-amber-400 mt-2">${mosque.district}, ${mosque.division}</p>
-                    <div class="flex justify-between items-center mt-3">
-                        <span class="text-emerald-400 font-mono">${mosque.iftarTime}</span>
-                        <span class="text-amber-400 text-sm">বিস্তারিত →</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Update markers on map
-        function updateMarkers(mosquesToShow) {
-            if (markers.length) {
-                markers.forEach(m => map.removeLayer(m));
-                markers = [];
-            }
-
-            mosquesToShow.forEach(mosque => {
-                const markerHtml = mosque.biryani ? 
-                    '<div class="biryani-marker">🍛</div>' : 
-                    '<div class="no-biryani-marker">🕌</div>';
-                
-                const icon = L.divIcon({
-                    html: markerHtml,
-                    className: 'custom-marker',
-                    iconSize: [44, 44],
-                    iconAnchor: [22, 44]
-                });
-
-                const marker = L.marker([mosque.lat, mosque.lng], { icon }).addTo(map);
-                
-                marker.bindPopup(`
-                    <div class="text-center p-2">
-                        <h4 class="font-bold text-white text-lg">${mosque.name}</h4>
-                        <p class="text-gray-300 text-xs mt-1">${mosque.address}</p>
-                        <div class="my-2 text-2xl">${mosque.biryani ? '🍛' : '🥗'}</div>
-                        <p class="text-amber-400 font-medium">${mosque.iftarTime}</p>
-                        <button onclick="showDetails(${mosque.id})" 
-                                class="mt-2 gold-gradient text-slate-900 px-4 py-1.5 rounded-full text-sm font-bold">
-                            বিস্তারিত
-                        </button>
-                    </div>
-                `);
-                
-                markers.push(marker);
-            });
-        }
-
-        // Filter data
-        function filterData() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            let filtered = mosques;
-            
-            if (currentDivision !== 'all') {
-                filtered = filtered.filter(m => m.division === currentDivision);
-            }
-            
-            if (onlyBiryani) {
-                filtered = filtered.filter(m => m.biryani);
-            }
-            
-            if (searchTerm) {
-                filtered = filtered.filter(m => 
-                    m.name.toLowerCase().includes(searchTerm) || 
-                    m.address.toLowerCase().includes(searchTerm) ||
-                    m.district.toLowerCase().includes(searchTerm)
-                );
-            }
-            
-            renderList(filtered);
-            updateMarkers(filtered);
-            document.getElementById('total-mosques').textContent = filtered.length;
-            document.getElementById('total-biryani').textContent = filtered.filter(m => m.biryani).length;
-        }
-
-        // Filter by division
-        function filterByDivision(division) {
-            currentDivision = division;
-            
-            document.querySelectorAll('.division-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            if (division === 'all') {
-                document.getElementById('div-all').classList.add('active');
-            } else {
-                document.getElementById(`div-${division}`).classList.add('active');
-            }
-            
-            filterData();
-        }
-
-        // Toggle biryani filter
-        function toggleBiryaniFilter() {
-            onlyBiryani = !onlyBiryani;
-            const btn = document.getElementById('map-filter-btn');
-            if (onlyBiryani) {
-                btn.classList.add('bg-amber-500/30');
-            } else {
-                btn.classList.remove('bg-amber-500/30');
-            }
-            filterData();
-        }
-
-        // Reset filters
-        function resetFilters() {
-            onlyBiryani = false;
-            currentDivision = 'all';
-            document.getElementById('search-input').value = '';
-            document.getElementById('map-filter-btn').classList.remove('bg-amber-500/30');
-            
-            document.querySelectorAll('.division-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.getElementById('div-all').classList.add('active');
-            
-            filterData();
-        }
-
-        // Initialize map
-        function initMap() {
-            map = L.map('map').setView([23.685, 90.3563], 7);
-            
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '© OpenStreetMap'
-            }).addTo(map);
-
-            updateMarkers(mosques);
-            
-            // Get user location
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(pos => {
-                    userLat = pos.coords.latitude;
-                    userLng = pos.coords.longitude;
-                    
-                    L.marker([userLat, userLng], {
-                        icon: L.divIcon({
-                            html: '<div class="w-4 h-4 bg-blue-500 rounded-full border-2 border-white animate-pulse"></div>'
-                        })
-                    }).addTo(map).bindPopup('আপনার অবস্থান');
-                });
-            }
-        }
-
-        // Fly to mosque
-        function flyToMosque(id) {
-            const mosque = mosques.find(m => m.id === id);
-            if (mosque) {
-                map.setView([mosque.lat, mosque.lng], 16);
-                setTimeout(() => {
-                    markers.find(m => 
-                        m._latlng.lat === mosque.lat && 
-                        m._latlng.lng === mosque.lng
-                    )?.openPopup();
-                }, 500);
-            }
-        }
-
-        // Show details modal
-        function showDetails(id) {
-            const mosque = mosques.find(m => m.id === id);
-            if (!mosque) return;
-            
-            const modal = document.getElementById('modal');
-            const content = document.getElementById('modal-content');
-            
-            content.innerHTML = `
-                <div class="text-center mb-6">
-                    <div class="text-6xl mb-3">${mosque.biryani ? '🍛' : '🕌'}</div>
-                    <h2 class="text-2xl font-bold gold-text">${mosque.name}</h2>
-                    <p class="text-gray-300 mt-1">${mosque.address}</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-slate-800/50 p-4 rounded-xl text-center">
-                            <p class="text-sm text-gray-400">ইফতার</p>
-                            <p class="text-xl font-bold text-emerald-400">${mosque.iftarTime}</p>
-                        </div>
-                        <div class="bg-slate-800/50 p-4 rounded-xl text-center">
-                            <p class="text-sm text-gray-400">বিরিয়ানি</p>
-                            <p class="text-xl font-bold ${mosque.biryani ? 'text-amber-400' : 'text-gray-400'}">
-                                ${mosque.biryani ? '✅ আছে' : '❌ নেই'}
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-slate-800/50 p-5 rounded-xl">
-                        <p class="text-sm text-gray-400 mb-2">বিস্তারিত</p>
-                        <p class="text-gray-300">${mosque.details}</p>
-                        ${mosque.biryani ? `
-                            <p class="mt-2 text-amber-400">
-                                <i class="fas fa-utensils mr-2"></i>${mosque.biryaniType}
-                            </p>
-                        ` : ''}
-                    </div>
-                    
-                    <div class="flex items-center gap-2 text-sm text-gray-400">
-                        <i class="fas fa-map-pin text-amber-400"></i>
-                        <span>${mosque.district}, ${mosque.division}</span>
-                    </div>
-                </div>
-            `;
-            
-            modal.classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
-        }
-
-        // Add new mosque
-        function addNewMosque() {
-            const name = document.getElementById('add-name').value.trim();
-            const address = document.getElementById('add-address').value.trim();
-            const division = document.getElementById('add-division').value;
-            const biryani = document.getElementById('add-biryani').value === 'true';
-            
-            if (!name || !address) {
-                alert('নাম ও ঠিকানা দিন');
-                return;
-            }
-
-            const center = divisions[division];
-            
-            const newMosque = {
-                id: Date.now(),
-                name: name,
-                division: division,
-                district: address.split(',')[0].trim() || division,
-                lat: center.lat + (Math.random() - 0.5) * 0.2,
-                lng: center.lng + (Math.random() - 0.5) * 0.2,
-                address: address,
-                iftarTime: "৫:৫৮ PM",
-                biryani: biryani,
-                biryaniType: biryani ? "ব্যবহারকারীর তথ্য অনুযায়ী" : "নেই",
-                details: "ব্যবহারকারীর দেওয়া তথ্য। ধন্যবাদ!"
-            };
-            
-            mosques.unshift(newMosque);
-            localStorage.setItem('bdIftarMosques', JSON.stringify(mosques));
-            
-            filterData();
-            updateMarkers(mosques);
-            
-            alert('✅ তথ্য যোগ হয়েছে! ম্যাপ দেখুন');
-            
-            document.getElementById('add-name').value = '';
-            document.getElementById('add-address').value = '';
-        }
-
-        // Update time
-        function updateTime() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('bn-BD', { hour: '2-digit', minute: '2-digit' });
-            const dateStr = now.toLocaleDateString('bn-BD', { day: 'numeric', month: 'long', year: 'numeric' });
-            
-            document.getElementById('current-time').textContent = timeStr;
-            document.getElementById('current-date-bn').textContent = dateStr;
-        }
-
-        // Initialize
-        window.onload = function() {
-            loadData();
-            initMap();
-            updateTime();
-            setInterval(updateTime, 1000);
-        };
-    </script>
+    // শুরু
+    renderList();
+  </script>
 </body>
 </html>
