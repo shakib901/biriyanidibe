@@ -748,6 +748,9 @@
       'ফেনী': [23.0, 91.4]
     };
 
+    // বিরিয়ানির মাংসের ধরন
+    const meatTypes = ['🐐 খাসির বিরিয়ানি', '🐄 গরুর বিরিয়ানি', '🐓 মুরগির বিরিয়ানি'];
+
     // বাস্তব মসজিদ ডাটা (ঢাকার ভিতরে আরও মসজিদ যোগ করা হয়েছে)
     let mosques = [
       // বরিশাল বিভাগ - চন্দ্রপাড়া মসজিদ 
@@ -761,7 +764,8 @@
         real: 45,
         fake: 3,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // নওগাঁ - কুসুম্বা মসজিদ (ঐতিহাসিক) 
@@ -775,7 +779,8 @@
         real: 78,
         fake: 2,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ব্রাহ্মণবাড়িয়া - গ্যাস ফিল্ড জামে মসজিদ 
@@ -789,7 +794,8 @@
         real: 62,
         fake: 5,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ঢাকা - বাংলাদেশ বেতার মসজিদ 
@@ -803,7 +809,8 @@
         real: 89,
         fake: 7,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // কুমিল্লা - শাহ সুজা মসজিদ 
@@ -817,7 +824,8 @@
         real: 94,
         fake: 4,
         available: true,
-        type: "others"
+        type: "others",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // চট্টগ্রাম - ঐতিহাসিক মসজিদ
@@ -831,7 +839,8 @@
         real: 120,
         fake: 8,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // রাজশাহী
@@ -845,7 +854,8 @@
         real: 56,
         fake: 3,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // সিলেট
@@ -859,7 +869,8 @@
         real: 88,
         fake: 6,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // গাজীপুর
@@ -873,7 +884,8 @@
         real: 45,
         fake: 2,
         available: false,
-        type: "others"
+        type: "others",
+        meatType: "🥣 নেই"
       },
       
       // কক্সবাজার - সমুদ্র সৈকত মসজিদ
@@ -887,7 +899,8 @@
         real: 110,
         fake: 9,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // রংপুর
@@ -901,7 +914,8 @@
         real: 67,
         fake: 4,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // খুলনা
@@ -915,7 +929,8 @@
         real: 73,
         fake: 5,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ময়মনসিংহ
@@ -929,7 +944,8 @@
         real: 52,
         fake: 3,
         available: false,
-        type: "others"
+        type: "others",
+        meatType: "🥣 নেই"
       },
       
       // বগুড়া
@@ -943,7 +959,8 @@
         real: 48,
         fake: 2,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // যশোর
@@ -957,7 +974,8 @@
         real: 61,
         fake: 4,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // দিনাজপুর
@@ -971,7 +989,8 @@
         real: 43,
         fake: 2,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // পটুয়াখালী
@@ -985,7 +1004,8 @@
         real: 38,
         fake: 1,
         available: false,
-        type: "others"
+        type: "others",
+        meatType: "🥣 নেই"
       },
       
       // ফেনী
@@ -999,7 +1019,8 @@
         real: 55,
         fake: 3,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // কুষ্টিয়া
@@ -1013,7 +1034,8 @@
         real: 47,
         fake: 2,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // নোয়াখালী
@@ -1027,7 +1049,8 @@
         real: 42,
         fake: 2,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ঝালকাঠি
@@ -1041,7 +1064,8 @@
         real: 35,
         fake: 1,
         available: false,
-        type: "others"
+        type: "others",
+        meatType: "🥣 নেই"
       },
       
       // রামপট্টি বায়তুন নূর জামে মসজিদ (বরিশালের কাছে) 
@@ -1055,7 +1079,8 @@
         real: 41,
         fake: 2,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // মৌলভীবাজার
@@ -1069,7 +1094,8 @@
         real: 53,
         fake: 3,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // হবিগঞ্জ
@@ -1083,7 +1109,8 @@
         real: 46,
         fake: 2,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // সুনামগঞ্জ
@@ -1097,7 +1124,8 @@
         real: 39,
         fake: 1,
         available: false,
-        type: "others"
+        type: "others",
+        meatType: "🥣 নেই"
       },
       
       // ঢাকার নতুন মসজিদ - ১. বায়তুল মোকাররম
@@ -1111,7 +1139,8 @@
         real: 250,
         fake: 15,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ঢাকার নতুন মসজিদ - ২. সাত মসজিদ
@@ -1125,7 +1154,8 @@
         real: 120,
         fake: 8,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ঢাকার নতুন মসজিদ - ৩. তারা মসজিদ
@@ -1139,7 +1169,8 @@
         real: 95,
         fake: 4,
         available: false,
-        type: "others"
+        type: "others",
+        meatType: "🥣 নেই"
       },
       
       // ঢাকার নতুন মসজিদ - ৪. চকবাজার শাহী মসজিদ
@@ -1153,7 +1184,8 @@
         real: 88,
         fake: 5,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ঢাকার নতুন মসজিদ - ৫. হোসেনী দালান
@@ -1167,7 +1199,8 @@
         real: 76,
         fake: 3,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ঢাকার নতুন মসজিদ - ৬. খান মোহাম্মদ মৃধা মসজিদ
@@ -1181,7 +1214,8 @@
         real: 52,
         fake: 2,
         available: false,
-        type: "others"
+        type: "others",
+        meatType: "🥣 নেই"
       },
       
       // ঢাকার নতুন মসজিদ - ৭. বিনত বিবি মসজিদ
@@ -1195,7 +1229,8 @@
         real: 44,
         fake: 2,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ঢাকার নতুন মসজিদ - ৮. মুসা খান মসজিদ
@@ -1209,7 +1244,8 @@
         real: 38,
         fake: 1,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ঢাকার নতুন মসজিদ - ৯. করতলব খান মসজিদ
@@ -1223,7 +1259,8 @@
         real: 47,
         fake: 2,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ঢাকার নতুন মসজিদ - ১০. আলীপুর মসজিদ
@@ -1237,7 +1274,8 @@
         real: 62,
         fake: 4,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ঢাকার নতুন মসজিদ - ১১. বনানী জামে মসজিদ
@@ -1251,7 +1289,8 @@
         real: 85,
         fake: 6,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ঢাকার নতুন মসজিদ - ১২. গুলশান সেন্ট্রাল মসজিদ
@@ -1265,7 +1304,8 @@
         real: 112,
         fake: 8,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ঢাকার নতুন মসজিদ - ১৩. উত্তরায়ণ জামে মসজিদ
@@ -1279,7 +1319,8 @@
         real: 67,
         fake: 3,
         available: true,
-        type: "kacchi"
+        type: "kacchi",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       },
       
       // ঢাকার নতুন মসজিদ - ১৪. ধানমন্ডি জামে মসজিদ
@@ -1293,7 +1334,8 @@
         real: 73,
         fake: 5,
         available: false,
-        type: "others"
+        type: "others",
+        meatType: "🥣 নেই"
       },
       
       // ঢাকার নতুন মসজিদ - ১৫. কলাবাগান জামে মসজিদ
@@ -1307,7 +1349,8 @@
         real: 58,
         fake: 3,
         available: true,
-        type: "tehri"
+        type: "tehri",
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       }
     ];
 
@@ -1347,19 +1390,24 @@
 
       const marker = L.marker([m.lat, m.lng], {icon}).addTo(map);
       
-      // পপআপে মসজিদের নাম, বিরিয়ানি আছে কিনা, সত্যি/মিথ্যা ভোট
+      // পপআপে মসজিদের নাম, বিরিয়ানি আছে কিনা, মাংসের ধরন ও ভোট
       marker.bindPopup(`
-        <div style="min-width: 200px; padding: 8px;">
+        <div style="min-width: 220px; padding: 12px;">
           <div style="font-weight: 700; font-size: 16px; color: #f97316; margin-bottom: 4px;">${m.name}</div>
-          <div style="color: #64748b; font-size: 12px; margin-bottom: 8px;">${m.area}, ${m.district}</div>
-          <div style="background: ${m.available ? '#f97316' : '#94a3b8'}; color: white; padding: 6px; border-radius: 30px; text-align: center; margin-bottom: 8px; font-size: 13px;">
-            ${m.available ? '🍛 বিরিয়ানি আছে' : '🥣 বিরিয়ানি নেই'}
-          </div>
+          <div style="color: #64748b; font-size: 12px; margin-bottom: 10px;">${m.area}, ${m.district}</div>
+          ${m.available ? 
+            `<div style="background: #f97316; color: white; padding: 8px; border-radius: 30px; text-align: center; margin-bottom: 10px; font-size: 14px; font-weight: 600;">
+              ${m.meatType}
+            </div>` : 
+            `<div style="background: #94a3b8; color: white; padding: 8px; border-radius: 30px; text-align: center; margin-bottom: 10px; font-size: 14px; font-weight: 600;">
+              🥣 আজ বিরিয়ানি নেই
+            </div>`
+          }
           <div style="display: flex; justify-content: space-between; gap: 8px;">
-            <div style="flex: 1; background: #dcfce7; color: #166534; padding: 6px; border-radius: 30px; text-align: center; font-size: 12px; font-weight: 600;">
+            <div style="flex: 1; background: #dcfce7; color: #166534; padding: 8px; border-radius: 30px; text-align: center; font-size: 13px; font-weight: 600;">
               👍 সত্যি ${m.real}
             </div>
-            <div style="flex: 1; background: #fee2e2; color: #991b1b; padding: 6px; border-radius: 30px; text-align: center; font-size: 12px; font-weight: 600;">
+            <div style="flex: 1; background: #fee2e2; color: #991b1b; padding: 8px; border-radius: 30px; text-align: center; font-size: 13px; font-weight: 600;">
               👎 মিথ্যা ${m.fake}
             </div>
           </div>
@@ -1383,7 +1431,7 @@
               <div style="font-weight: 600; color: #0f172a">${m.name}</div>
               <div style="color: #64748b; font-size: 11px">${m.area}</div>
               <div style="color: #f97316; font-size: 11px; margin-top: 4px">
-                ${m.available ? '🍛 ' + m.type : '🥣 নেই'}
+                ${m.available ? m.meatType : '🥣 নেই'}
               </div>
             </div>
             <div>
@@ -1564,13 +1612,15 @@
         }
       }
 
+      const meatTypes = ['🐐 খাসির বিরিয়ানি', '🐄 গরুর বিরিয়ানি', '🐓 মুরগির বিরিয়ানি'];
       const newM = {
         id: Date.now(),
         name, area, district,
         lat, lng,
         real: 1, fake: 0,
         available: true,
-        type: selectedType
+        type: selectedType,
+        meatType: meatTypes[Math.floor(Math.random() * meatTypes.length)]
       };
       
       mosques.push(newM);
